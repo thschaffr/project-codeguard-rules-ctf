@@ -42,6 +42,15 @@ For every active file type:
 2.  **APPLY**: Check the file content against the specific requirements in that rule.
 3.  **REPORT**: You must flag violations explicitly referencing the rule file name.
 
+**Step 4: Verification Checklist (MANDATORY)**
+Before concluding your analysis, you MUST confirm:
+- [ ] I searched for ALL extensions listed in the table (including CSS, HTML, YAML, etc.).
+- [ ] For EVERY file type found, I READ at least one file of that type.
+- [ ] For EVERY file type found, I READ the corresponding rule file from the table.
+- [ ] I reported findings for ALL file types, not just PHP/Python/Java.
+
+**If you cannot check all boxes, your analysis is INCOMPLETE. Go back and read the missing files/rules.**
+
 **A. Always-Apply Rules**
 Some rules MUST be checked on every code operation:
 - `codeguard-1-hardcoded-credentials.md`
