@@ -27,45 +27,69 @@ When writing or reviewing code:
 - `codeguard-1-digital-certificates.md` - Validate and manage digital certificates securely
 
 2. Context-Specific Rules (TABLE-DRIVEN, MANDATORY):
-The table below is the **single source of truth** for which file types are in scope and which rules must be applied.
+The Rule Application Table below is the **single source of truth** for which file types are in scope and which rules must be applied.
 
-**You MUST execute this loop for EVERY language in the table, IN TABLE ORDER:**
+**PHASE 1: DISCOVERY (required before any analysis)**
 
-FOR each language L in the Rule Application Table, IN THE ORDER LISTED (c → cpp → css → ... → yaml):
-  IF (any discovered file matches L's extensions):
-    1. ENUMERATE: Copy the EXACT list of rule files from L's row
-    2. LOAD: Read EACH rule file in that list (from the skill's rules/ directory)
-    3. PROVE: Output "RulesLoaded" with a quote from each rule
-    4. APPLY: Read EACH file matching L's extensions and check against ALL loaded rules
-    5. REPORT: Output "Findings" with a quote from each analyzed file
-    
-    >>> STOP: Output the LANGUAGE block for L NOW before moving to the next language. <<<
+1. Scan for files matching extensions in the Rule Application Table
+2. Build your list of discovered languages (in table order)
+3. Output this EXACTLY before proceeding:
+
+DISCOVERED LANGUAGES (in table order):
+1. [language] - [count] files
+2. [language] - [count] files
+...
+
+>>> This is your commitment. Every language in this list MUST have a LANGUAGE block in your final output. <<<
+
+**CRITICAL:**
+- Your discovered list is typically SHORT (under 10 languages)
+- Every language in the table has rules because it has security implications
+- The rule files define what to check — your job is to load and apply them, not to judge which languages "matter"
+- Skipping ANY discovered language is a review failure
+
+**PHASE 2: ANALYSIS (process each committed language, in order)**
+
+FOR each language L in your DISCOVERED LANGUAGES list, in order:
+  1. ENUMERATE: Copy the EXACT list of rule files from L's row in the table
+  2. LOAD: Read EACH rule file in that list (from the skill's rules/ directory)
+  3. PROVE: Output "RulesLoaded" with a quote from each rule
+  4. APPLY: Read EACH file matching L's extensions and check against ALL loaded rules
+  5. REPORT: Output "Findings" with a quote from each analyzed file
+  
+  >>> Output the LANGUAGE block for L NOW before moving to the next language. <<<
 
 **FORBIDDEN shortcuts:**
-- Processing languages out of table order (you MUST do c before cpp, cpp before css, css before d, etc.)
-- Skipping ahead to "more important" languages like php or python
+- Skipping any language in your DISCOVERED LANGUAGES list
+- Processing languages out of order
 - Using filename globs like `codeguard-0-*.md` (misses custom rules like `codeguard-9-*.md`)
 - Truncating output with `head` or `| head -N`
 - Stopping after reading a few "representative" files
-- Skipping a language because it "doesn't have security issues"
+- Judging that a language "doesn't have security issues"
 
-**Required output format (per language with discovered files):**
+**Required output format:**
 
-LANGUAGE: <language name>
-Files: <file1>, <file2>, ...
+DISCOVERED LANGUAGES (in table order):
+1. [language] - [count] files
+...
+
+LANGUAGE: [language]
+Files: [file1], [file2], ...
 
 RulesLoaded:
-- <rule-file>.md: LOADED | RuleQuote: "<one exact line from this rule>"
-- <rule-file>.md: LOADED | RuleQuote: "<one exact line from this rule>"
-(repeat for ALL rules listed in this language's table row)
+- [rule-file].md: LOADED | RuleQuote: "[one exact line from this rule]"
+(repeat for ALL rules in this language's table row)
 
 Findings:
-- <file>: <rule-file>.md: PASS|FAIL - <reason> | FileQuote: "<one line from file>"
-(repeat for ALL files × ALL rules)
+- [file]: [rule-file].md: PASS|FAIL - [reason] | FileQuote: "[one line from file]"
+(repeat for ALL files)
+
+(repeat LANGUAGE block for each discovered language, in order)
 
 **VALIDATION (self-check before completing):**
-- [ ] Languages are reported in table order (c, cpp, css, d, docker, go, html, ...)
-- [ ] Every language with discovered files has a LANGUAGE block
+- [ ] DISCOVERED LANGUAGES block exists
+- [ ] Every language in DISCOVERED LANGUAGES has a LANGUAGE block
+- [ ] LANGUAGE blocks appear in same order as DISCOVERED LANGUAGES
 - [ ] Every rule in each language's table row appears in RulesLoaded with a RuleQuote
 - [ ] Every discovered file appears in Findings with a FileQuote
 - [ ] If any checkbox fails, the review is INVALID - go back and complete it
