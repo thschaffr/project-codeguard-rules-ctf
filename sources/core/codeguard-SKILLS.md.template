@@ -39,6 +39,17 @@ When writing or reviewing code:
 - Step 3: Load and apply the identified rules for each language to all matching files
 - Step 4: Do not skip any language — if you listed it in Step 2, you MUST analyze it in Step 3
 
+**Required Output Format:**
+Your final report MUST include a findings section for EACH discovered language:
+
+### [Language] Findings
+Files analyzed: [list files]
+Rules applied: [list rules from table]
+- Finding 1: [description] | File: [filename] Line: [number]
+- (or) No issues found after applying [rule names]
+
+If any discovered language is missing its findings section, the review is INCOMPLETE.
+
 <!-- LANGUAGE_MAPPINGS_START -->
 <!-- LANGUAGE_MAPPINGS_END -->
 3. Proactive Security: Don't just avoid vulnerabilities-actively implement secure patterns:
