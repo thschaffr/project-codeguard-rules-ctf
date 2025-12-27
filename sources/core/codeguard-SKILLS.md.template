@@ -25,6 +25,15 @@ When writing or reviewing code:
 - `codeguard-1-crypto-algorithms.md` - Use only modern, secure cryptographic algorithms
 - `codeguard-1-digital-certificates.md` - Validate and manage digital certificates securely
 2. Context-Specific Rules: Apply rules from /rules directory based on the language of the feature being implemented using the table given below:
+
+**File Discovery:** Build your file search using the File Extensions column in the table. For every language where files are found, you MUST load and apply ALL rules listed in that language's row.
+
+**Mandatory Process:**
+- Step 1: Discover files matching extensions from the table
+- Step 2: List all discovered languages (commit to analyzing each one)
+- Step 3: For each discovered language, load its rule files and apply them to all matching files
+- Step 4: Do not skip any language — every language in the table has rules because it has security implications
+
 <!-- LANGUAGE_MAPPINGS_START -->
 <!-- LANGUAGE_MAPPINGS_END -->
 3. Proactive Security: Don't just avoid vulnerabilities-actively implement secure patterns:
