@@ -29,18 +29,41 @@ When writing or reviewing code:
 2. Context-Specific Rules (TABLE-DRIVEN, MANDATORY):
 The table below is the **single source of truth** for which file types are in scope and which rules must be applied.
 
-You MUST follow this process:
+**You MUST execute this loop for EVERY language in the table:**
 
-- **Discover**: Build your file search ONLY from the table’s file extensions. If any extension listed in the table is missing from your search, the review is INVALID.
-- **Load rules**: For every language where at least one matching file exists, you MUST load **every** rule file listed in that language’s row (rule files live in the skill’s `rules/` directory).
-  - **IMPORTANT (no globbing rules):**
-    - You are FORBIDDEN from discovering or selecting rule files using filename patterns like `codeguard-0-*.md` or output truncation like `head`.
-    - You MUST load rule files by their exact filenames listed in the Rule Application Table (including custom rules like `codeguard-9-*.md`).
-- **Apply rules**: For every discovered file that matches a table extension, you MUST read the file and evaluate it against the loaded rule(s) for its language. You are FORBIDDEN from skipping “non-code” files if they match the table.
-  - You MUST read and assess **every** discovered file (do not stop after reading a few “representative” files).
-- **Evidence**: For each language you report on, include at least:
-  - one exact line quoted from each loaded rule file (proves the rule was actually read)
-  - one exact line quoted from each analyzed file (proves the file was actually read)
+FOR each language L in the Rule Application Table:
+  IF (any discovered file matches L's extensions):
+    1. ENUMERATE: Copy the EXACT list of rule files from L's row
+    2. LOAD: Read EACH rule file in that list (from the skill's rules/ directory)
+    3. PROVE: Output "RulesLoaded" with a quote from each rule
+    4. APPLY: Read EACH file matching L's extensions and check against ALL loaded rules
+    5. REPORT: Output "Findings" with a quote from each analyzed file
+
+**FORBIDDEN shortcuts:**
+- Using filename globs like `codeguard-0-*.md` (misses custom rules like `codeguard-9-*.md`)
+- Truncating output with `head` or `| head -N`
+- Stopping after reading a few "representative" files
+- Skipping a language because it "doesn't have security issues"
+
+**Required output format (per language with discovered files):**
+
+LANGUAGE: <language name>
+Files: <file1>, <file2>, ...
+
+RulesLoaded:
+- <rule-file>.md: LOADED | RuleQuote: "<one exact line from this rule>"
+- <rule-file>.md: LOADED | RuleQuote: "<one exact line from this rule>"
+(repeat for ALL rules listed in this language's table row)
+
+Findings:
+- <file>: <rule-file>.md: PASS|FAIL - <reason> | FileQuote: "<one line from file>"
+(repeat for ALL files × ALL rules)
+
+**VALIDATION (self-check before completing):**
+- [ ] Every language with discovered files has a LANGUAGE block
+- [ ] Every rule in each language's table row appears in RulesLoaded with a RuleQuote
+- [ ] Every discovered file appears in Findings with a FileQuote
+- [ ] If any checkbox fails, the review is INVALID - go back and complete it
 
 <!-- LANGUAGE_MAPPINGS_START -->
 <!-- LANGUAGE_MAPPINGS_END -->
@@ -73,6 +96,6 @@ While writing code:
 After writing code:
 - Review against implementation checklists in each rule
 - Verify no hardcoded credentials or secrets
-- Validate that all the rules have been successfully followed when applicable.
+- Validate that all the rules have been successfully followed when applicable
 - Explain which security rules were applied
 - Highlight security features implemented
