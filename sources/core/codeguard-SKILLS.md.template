@@ -50,14 +50,19 @@ List ALL files found, grouped by the **Language** column from the table.
 For every row in the table where you found matching files, list them here.
 
 #### B. Rules Loaded (by Type)
-For EACH language listed in Section A:
-1. Look up its row in the **Rule Application Table**.
-2. Identify the **Rule Files to Apply** column.
-3. Confirm you LOADED each rule file listed.
+For EACH language listed in Section A, and for EACH rule file listed for that language in the Rule Application Table:
 
-Format (repeat per rule file):
+You MUST output EXACTLY the following fields (no extra commentary on these lines):
+
 - `[Language] → [Rule File]: LOADED`
-- `Rule evidence (quote): "<one line from the rule file>"`
+- `Rule evidence (verbatim quote): "<one exact line copied from the rule file>"`
+- `Rule evidence location: <rule filename + line number if possible>`
+
+**FORBIDDEN** in Section B:
+- Any text like `(No vulnerabilities...)`, `N/A`, `not applicable`, `none`, `no issues`, summaries, or opinions
+- Claiming a rule is “loaded” without a verbatim quote from that rule file
+
+If you cannot provide the verbatim quote for a listed rule file, you MUST mark the review INVALID and go back to read that rule file.
 
 #### C. Findings (by Type)
 For EACH language listed in Section A, report your findings after applying the rules.
@@ -77,7 +82,7 @@ This proves you actually READ the file, not assumed its content.
 
 **VALIDATION CHECK**:
 - Every language in Section A MUST appear in Section B and Section C.
-- Section B MUST include rule evidence quotes for every rule you claim is loaded.
+- Section B MUST contain `: LOADED` for every `[Language] → [Rule File]` pair implied by Section A and the Rule Application Table, AND each must include a verbatim rule quote.
 - Section C MUST include file evidence quotes for every file you make a claim about.
 - If any requirement is missing, your review is **INVALID**. Go back and complete the missing rule loading and file reading.
 
