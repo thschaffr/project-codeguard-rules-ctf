@@ -32,15 +32,15 @@ Scan the codebase for **ALL** file extensions listed in the table below.
 For every file found:
 1.  **CHECK**: Is its extension listed in the table?
 2.  **IF YES**: You **MUST READ** the file content.
-    *   *Reason*: A rule exists for it, therefore it is in scope.
-    *   *Constraint*: You are **FORBIDDEN** from skipping a file if it matches a table entry, regardless of language (e.g., CSS, XML, YAML).
-3.  **IF NO**: Only then may you skip it.
+    *   *Constraint*: You are **FORBIDDEN** from skipping a file if it matches a table entry.
 
-**Step 3: Apply Rules**
-Apply the specific rule files listed in the table column "Rule Files to Apply".
+**Step 3: Rule Loading & Application**
+For every active file type:
+1.  **READ THE RULE FILE**: You MUST read the content of the rule file listed in the table (e.g., `codeguard-9-external-imports.md`).
+2.  **APPLY**: Check the file content against the specific requirements in that rule.
+3.  **REPORT**: You must flag violations explicitly referencing the rule file name.
 
-### 2. Rule Application
-When writing or reviewing code:
+### 2. Rule Application Table
 
 **A. Always-Apply Rules**
 Some rules MUST be checked on every code operation:
