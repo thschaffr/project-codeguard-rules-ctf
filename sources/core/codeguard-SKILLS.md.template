@@ -27,11 +27,12 @@ You MUST construct a file search command (e.g., `find`) that explicitly includes
 - **DO NOT** skip "non-code" files like `.css`, `.xml`, or `.yaml`.
 - **EXAMPLE**: If the table lists `css` with extensions `.css`, your find command MUST include `-name "*.css"`.
 
-**Step 2: Map Files to Rules**
-For every file found:
-1. Identify its language from the file extension.
-2. Look up the corresponding rules in the table below.
-3. If rules exist, **you must apply them**.
+**Step 2: Mandatory Analysis**
+For EVERY file found that matches a language in the table:
+1. You **MUST READ** the content of the file to perform the security check.
+2. You **MUST APPLY** the specific rules listed in the table for that file type.
+3. **DO NOT SKIP** files just because they are stylesheets, templates, or config files.
+4. **DO NOT ASSUME** a file is safe based on its name or extension alone.
 
 ### 2. Rule Application
 When writing or reviewing code:
