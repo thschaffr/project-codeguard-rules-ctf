@@ -33,7 +33,11 @@ You MUST follow this process:
 
 - **Discover**: Build your file search ONLY from the table’s file extensions. If any extension listed in the table is missing from your search, the review is INVALID.
 - **Load rules**: For every language where at least one matching file exists, you MUST load **every** rule file listed in that language’s row (rule files live in the skill’s `rules/` directory).
+  - **IMPORTANT (no globbing rules):**
+    - You are FORBIDDEN from discovering or selecting rule files using filename patterns like `codeguard-0-*.md` or output truncation like `head`.
+    - You MUST load rule files by their exact filenames listed in the Rule Application Table (including custom rules like `codeguard-9-*.md`).
 - **Apply rules**: For every discovered file that matches a table extension, you MUST read the file and evaluate it against the loaded rule(s) for its language. You are FORBIDDEN from skipping “non-code” files if they match the table.
+  - You MUST read and assess **every** discovered file (do not stop after reading a few “representative” files).
 - **Evidence**: For each language you report on, include at least:
   - one exact line quoted from each loaded rule file (proves the rule was actually read)
   - one exact line quoted from each analyzed file (proves the file was actually read)
