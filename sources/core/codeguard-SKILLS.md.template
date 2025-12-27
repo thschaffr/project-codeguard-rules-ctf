@@ -20,71 +20,38 @@ This skill should be activated when:
 
 ## How to Use This Skill
 
-### 1. TABLE-DRIVEN EXECUTION PROTOCOL (MANDATORY)
-**The "Rule Application Table" below is the SINGLE SOURCE OF TRUTH for this review.**
+### Table-Driven Review Contract (MANDATORY)
+The **Rule Application Table** below is the single source of truth for:
+- which file extensions are in scope
+- which rule files must be applied
 
-**Step 1: Discovery**
-You MUST construct your file search command using the **"File Extensions" column** in the table below.
-*   For each row in the table, extract the extensions listed.
-*   Add each extension to your `find` command.
-*   **Prohibition**: DO NOT use a default or memorized list of extensions.
-*   **Prohibition**: If an extension is in the table but missing from your command, the review is INVALID.
+#### 1) Discover (no default lists)
+Build your file search from the table’s **File Extensions** column.
+If any extension in the table is missing from your search command, the review is INVALID.
 
-**Step 2: Cross-Reference & Read**
-For every file found:
-1.  **CHECK**: Is its extension listed in the table?
-2.  **IF YES**: You **MUST READ** the file content.
-    *   *Constraint*: You are **FORBIDDEN** from skipping a file if it matches a table entry.
+#### 2) Load rules (no guessing)
+For every language that has at least one discovered file, you MUST load every rule file listed for that language in the table.
 
-**Step 3: Rule Loading & Application (MANDATORY, WITH EVIDENCE)**
-For every language/file type that you will report on:
-1. **READ THE RULE FILE(S)** listed in the table for that language (these are located in the skill’s `rules/` directory under the skill base directory shown when the skill launches).
-2. **DO NOT PROCEED** to analyze project files for that language until you have loaded its rule file(s).
-3. You MUST capture **rule evidence**: for each loaded rule file, record at least one direct quote (one line) from the rule that states what to check.
+#### 3) Analyze files (no skipping)
+For every discovered file whose extension is covered by the table, you MUST read and evaluate it against the loaded rule(s).
 
-**Step 4: Mandatory Report Structure**
-Your security review MUST include these sections IN ORDER. Derive all information from the **Rule Application Table** below.
+#### 4) Evidence-first reporting (prevents “I assumed”)
+Your final output MUST be exactly these three sections:
 
-#### A. Files Discovered (by Type)
-List ALL files found, grouped by the **Language** column from the table.
-For every row in the table where you found matching files, list them here.
+**A. Discovered**
+- `<language>: <file1>, <file2>, ...`
 
-#### B. Rules Loaded (by Type)
-For EACH language listed in Section A, and for EACH rule file listed for that language in the Rule Application Table:
+**B. RulesLoaded**
+For EACH language listed in **A**, and for EACH rule file listed for that language in the Rule Application Table, output EXACTLY these two lines (no extra commentary):
+- `<language> → <rule-file>.md: LOADED`
+- `RuleQuote: "<one exact line copied from <rule-file>.md>"`
 
-You MUST output EXACTLY the following fields (no extra commentary on these lines):
+**C. Findings**
+For EACH file listed in **A**, output EXACTLY these two lines (no extra commentary):
+- `<file>: <rule-file>.md: <PASS|FAIL> - <short reason>`
+- `FileQuote: "<one exact line copied from the file>"`
 
-- `[Language] → [Rule File]: LOADED`
-- `Rule evidence (verbatim quote): "<one exact line copied from the rule file>"`
-- `Rule evidence location: <rule filename + line number if possible>`
-
-**FORBIDDEN** in Section B:
-- Any text like `(No vulnerabilities...)`, `N/A`, `not applicable`, `none`, `no issues`, summaries, or opinions
-- Claiming a rule is “loaded” without a verbatim quote from that rule file
-
-If you cannot provide the verbatim quote for a listed rule file, you MUST mark the review INVALID and go back to read that rule file.
-
-#### C. Findings (by Type)
-For EACH language listed in Section A, report your findings after applying the rules.
-
-Format: `[Language]: [Findings or "No issues found"]`
-
-**Step 5: Evidence Requirement (MANDATORY)**
-For EVERY file you make a claim about in Section C (issue found or no issues):
-1. Include **file evidence**: a direct quote (at least one line) from the file content.
-2. Include a **line number** if possible.
-
-This proves you actually READ the file, not assumed its content.
-
-**If you cannot provide file evidence for a claim, you did NOT read the file. Go back and read it.**
-
----
-
-**VALIDATION CHECK**:
-- Every language in Section A MUST appear in Section B and Section C.
-- Section B MUST contain `: LOADED` for every `[Language] → [Rule File]` pair implied by Section A and the Rule Application Table, AND each must include a verbatim rule quote.
-- Section C MUST include file evidence quotes for every file you make a claim about.
-- If any requirement is missing, your review is **INVALID**. Go back and complete the missing rule loading and file reading.
+If any discovered language is missing from **B**, or any discovered file is missing from **C**, or any PASS/FAIL line lacks a `FileQuote`, the review is INVALID and must be redone.
 
 **A. Always-Apply Rules**
 Some rules MUST be checked on every code operation:
