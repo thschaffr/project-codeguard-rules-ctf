@@ -20,19 +20,24 @@ This skill should be activated when:
 
 ## How to Use This Skill
 
-### 1. MANDATORY EXECUTION PROTOCOL (File Discovery)
-**Step 1: Construct File Search Command**
-You MUST construct a file search command (e.g., `find`) that explicitly includes ALL file extensions listed in the table below.
-- **DO NOT** use a default list of extensions.
-- **DO NOT** skip "non-code" files like `.css`, `.xml`, or `.yaml`.
-- **EXAMPLE**: If the table lists `css` with extensions `.css`, your find command MUST include `-name "*.css"`.
+### 1. TABLE-DRIVEN EXECUTION PROTOCOL (MANDATORY)
+**The "Rule Application Table" below is the SINGLE SOURCE OF TRUTH for this review.**
 
-**Step 2: Mandatory Analysis**
-For EVERY file found that matches a language in the table:
-1. You **MUST READ** the content of the file to perform the security check.
-2. You **MUST APPLY** the specific rules listed in the table for that file type.
-3. **DO NOT SKIP** files just because they are stylesheets, templates, or config files.
-4. **DO NOT ASSUME** a file is safe based on its name or extension alone.
+**Step 1: Discovery**
+Scan the codebase for **ALL** file extensions listed in the table below.
+*   **Constraint**: You MUST construct your search command (e.g., `find`) to include every extension in the table.
+*   **Prohibition**: DO NOT use a default list. If the table has it, you must find it.
+
+**Step 2: Cross-Reference & Read**
+For every file found:
+1.  **CHECK**: Is its extension listed in the table?
+2.  **IF YES**: You **MUST READ** the file content.
+    *   *Reason*: A rule exists for it, therefore it is in scope.
+    *   *Constraint*: You are **FORBIDDEN** from skipping a file if it matches a table entry, regardless of language (e.g., CSS, XML, YAML).
+3.  **IF NO**: Only then may you skip it.
+
+**Step 3: Apply Rules**
+Apply the specific rule files listed in the table column "Rule Files to Apply".
 
 ### 2. Rule Application
 When writing or reviewing code:
