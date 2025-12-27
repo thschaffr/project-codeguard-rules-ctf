@@ -29,17 +29,21 @@ When writing or reviewing code:
 2. Context-Specific Rules (TABLE-DRIVEN, MANDATORY):
 The table below is the **single source of truth** for which file types are in scope and which rules must be applied.
 
-**You MUST execute this loop for EVERY language in the table:**
+**You MUST execute this loop for EVERY language in the table, IN TABLE ORDER:**
 
-FOR each language L in the Rule Application Table:
+FOR each language L in the Rule Application Table, IN THE ORDER LISTED (c → cpp → css → ... → yaml):
   IF (any discovered file matches L's extensions):
     1. ENUMERATE: Copy the EXACT list of rule files from L's row
     2. LOAD: Read EACH rule file in that list (from the skill's rules/ directory)
     3. PROVE: Output "RulesLoaded" with a quote from each rule
     4. APPLY: Read EACH file matching L's extensions and check against ALL loaded rules
     5. REPORT: Output "Findings" with a quote from each analyzed file
+    
+    >>> STOP: Output the LANGUAGE block for L NOW before moving to the next language. <<<
 
 **FORBIDDEN shortcuts:**
+- Processing languages out of table order (you MUST do c before cpp, cpp before css, css before d, etc.)
+- Skipping ahead to "more important" languages like php or python
 - Using filename globs like `codeguard-0-*.md` (misses custom rules like `codeguard-9-*.md`)
 - Truncating output with `head` or `| head -N`
 - Stopping after reading a few "representative" files
@@ -60,6 +64,7 @@ Findings:
 (repeat for ALL files × ALL rules)
 
 **VALIDATION (self-check before completing):**
+- [ ] Languages are reported in table order (c, cpp, css, d, docker, go, html, ...)
 - [ ] Every language with discovered files has a LANGUAGE block
 - [ ] Every rule in each language's table row appears in RulesLoaded with a RuleQuote
 - [ ] Every discovered file appears in Findings with a FileQuote
