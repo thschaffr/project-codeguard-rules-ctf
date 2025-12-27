@@ -19,52 +19,29 @@ This skill should be activated when:
 - Handling sensitive data, credentials, or cryptographic operations
 
 ## How to Use This Skill
+When writing or reviewing code:
 
-### Table-Driven Review Contract (MANDATORY)
-The **Rule Application Table** below is the single source of truth for:
-- which file extensions are in scope
-- which rule files must be applied
+1. Always-Apply Rules: Some rules MUST be checked on every code operation:
+- `codeguard-1-hardcoded-credentials.md` - Never hardcode secrets, passwords, API keys, or tokens
+- `codeguard-1-crypto-algorithms.md` - Use only modern, secure cryptographic algorithms
+- `codeguard-1-digital-certificates.md` - Validate and manage digital certificates securely
 
-#### 1) Discover (no default lists)
-Build your file search from the table’s **File Extensions** column.
-If any extension in the table is missing from your search command, the review is INVALID.
+2. Context-Specific Rules (TABLE-DRIVEN, MANDATORY):
+The table below is the **single source of truth** for which file types are in scope and which rules must be applied.
 
-#### 2) Load rules (no guessing)
-For every language that has at least one discovered file, you MUST load every rule file listed for that language in the table.
+You MUST follow this process:
 
-#### 3) Analyze files (no skipping)
-For every discovered file whose extension is covered by the table, you MUST read and evaluate it against the loaded rule(s).
+- **Discover**: Build your file search ONLY from the table’s file extensions. If any extension listed in the table is missing from your search, the review is INVALID.
+- **Load rules**: For every language where at least one matching file exists, you MUST load **every** rule file listed in that language’s row (rule files live in the skill’s `rules/` directory).
+- **Apply rules**: For every discovered file that matches a table extension, you MUST read the file and evaluate it against the loaded rule(s) for its language. You are FORBIDDEN from skipping “non-code” files if they match the table.
+- **Evidence**: For each language you report on, include at least:
+  - one exact line quoted from each loaded rule file (proves the rule was actually read)
+  - one exact line quoted from each analyzed file (proves the file was actually read)
 
-#### 4) Evidence-first reporting (prevents “I assumed”)
-Your final output MUST be exactly these three sections:
-
-**A. Discovered**
-- `<language>: <file1>, <file2>, ...`
-
-**B. RulesLoaded**
-For EACH language listed in **A**, and for EACH rule file listed for that language in the Rule Application Table, output EXACTLY these two lines (no extra commentary):
-- `<language> → <rule-file>.md: LOADED`
-- `RuleQuote: "<one exact line copied from <rule-file>.md>"`
-
-**C. Findings**
-For EACH file listed in **A**, output EXACTLY these two lines (no extra commentary):
-- `<file>: <rule-file>.md: <PASS|FAIL> - <short reason>`
-- `FileQuote: "<one exact line copied from the file>"`
-
-If any discovered language is missing from **B**, or any discovered file is missing from **C**, or any PASS/FAIL line lacks a `FileQuote`, the review is INVALID and must be redone.
-
-**A. Always-Apply Rules**
-Some rules MUST be checked on every code operation:
-- `codeguard-1-hardcoded-credentials.md`
-- `codeguard-1-crypto-algorithms.md`
-- `codeguard-1-digital-certificates.md`
-
-**B. Context-Specific Rules (Rule Application Table)**
 <!-- LANGUAGE_MAPPINGS_START -->
 <!-- LANGUAGE_MAPPINGS_END -->
 
-### 2. Proactive Security
-Don't just avoid vulnerabilities-actively implement secure patterns:
+3. Proactive Security: Don't just avoid vulnerabilities-actively implement secure patterns:
 - Use parameterized queries for database access
 - Validate and sanitize all user input
 - Apply least-privilege principles
