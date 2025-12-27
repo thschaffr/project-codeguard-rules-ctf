@@ -135,22 +135,30 @@ def matches_tag_filter(rule_tags: list[str], filter_tags: list[str]) -> bool:
 
 def update_skill_md(language_to_rules: dict[str, list[str]], skill_path: str) -> None:
     """
-    Update SKILL.md with language-to-rules mapping table.
+    Update SKILL.md with language-to-rules mapping table including file extensions.
 
     Args:
         language_to_rules: Dictionary mapping languages to rule files
         skill_path: Path to SKILL.md file
     """
-    # Generate markdown table
+    from language_mappings import LANGUAGE_TO_EXTENSIONS
+
+    # Generate markdown table with Extensions column
     table_lines = [
-        "| Language | Rule Files to Apply |",
-        "|----------|---------------------|",
+        "| Language | File Extensions | Rule Files to Apply |",
+        "|----------|-----------------|---------------------|",
     ]
 
     for language in sorted(language_to_rules.keys()):
         rules = sorted(language_to_rules[language])
         rules_str = ", ".join(rules)
-        table_lines.append(f"| {language} | {rules_str} |")
+        
+        # Get extensions for this language
+        extensions = LANGUAGE_TO_EXTENSIONS.get(language, [])
+        # Escape asterisks for markdown table
+        ext_str = ", ".join(extensions).replace("*", "\\*") if extensions else "N/A"
+        
+        table_lines.append(f"| {language} | {ext_str} | {rules_str} |")
 
     table = "\n".join(table_lines)
 
@@ -175,7 +183,7 @@ def update_skill_md(language_to_rules: dict[str, list[str]], skill_path: str) ->
 
     # Write back to SKILL.md
     skill_file.write_text(updated_content, encoding="utf-8")
-    print(f"Updated SKILL.md with language mappings")
+    print(f"Updated SKILL.md with language mappings and extensions")
 
 
 def convert_rules(input_path: str, output_dir: str = "dist", include_claudecode: bool = True, version: str = None, filter_tags: list[str] = None) -> dict[str, list[str]]:
