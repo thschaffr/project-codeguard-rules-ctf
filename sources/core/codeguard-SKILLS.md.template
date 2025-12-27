@@ -42,14 +42,32 @@ For every active file type:
 2.  **APPLY**: Check the file content against the specific requirements in that rule.
 3.  **REPORT**: You must flag violations explicitly referencing the rule file name.
 
-**Step 4: Verification Checklist (MANDATORY)**
-Before concluding your analysis, you MUST confirm:
-- [ ] I searched for ALL extensions listed in the table (including CSS, HTML, YAML, etc.).
-- [ ] For EVERY file type found, I READ at least one file of that type.
-- [ ] For EVERY file type found, I READ the corresponding rule file from the table.
-- [ ] I reported findings for ALL file types, not just PHP/Python/Java.
+**Step 4: Mandatory Report Structure**
+Your security review MUST include these sections IN ORDER. Derive all information from the **Rule Application Table** below.
 
-**If you cannot check all boxes, your analysis is INCOMPLETE. Go back and read the missing files/rules.**
+#### A. Files Discovered (by Type)
+List ALL files found, grouped by the **Language** column from the table.
+For every row in the table where you found matching files, list them here.
+
+#### B. Rules Loaded (by Type)
+For EACH language listed in Section A:
+1. Look up its row in the **Rule Application Table**.
+2. Identify the **Rule Files to Apply** column.
+3. Confirm you LOADED each rule file listed.
+
+Format: `[Language] → [Rule File]: LOADED`
+
+#### C. Findings (by Type)
+For EACH language listed in Section A, report your findings after applying the rules.
+
+Format: `[Language]: [Findings or "No issues found"]`
+
+---
+
+**VALIDATION CHECK**:
+- Every language in Section A MUST appear in Section B and Section C.
+- If a language appears in A but is missing from B or C, your review is **INVALID**.
+- You MUST go back and complete the missing analysis before concluding.
 
 **A. Always-Apply Rules**
 Some rules MUST be checked on every code operation:
