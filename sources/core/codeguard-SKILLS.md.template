@@ -25,8 +25,8 @@ This skill should be activated when:
 
 **Step 1: Discovery**
 You MUST construct your file search command using the **"File Extensions" column** in the table below.
-*   For each row in the table, extract the extensions listed (e.g., `.css`, `.scss`).
-*   Add each extension to your `find` command using `-name "*.ext"`.
+*   For each row in the table, extract the extensions listed.
+*   Add each extension to your `find` command.
 *   **Prohibition**: DO NOT use a default or memorized list of extensions.
 *   **Prohibition**: If an extension is in the table but missing from your command, the review is INVALID.
 
@@ -62,12 +62,22 @@ For EACH language listed in Section A, report your findings after applying the r
 
 Format: `[Language]: [Findings or "No issues found"]`
 
+**Step 5: Evidence Requirement (MANDATORY)**
+For EVERY file analyzed in Section C, you MUST include:
+1. **A direct quote** (at least one line) from the file content.
+2. **A line number** if possible.
+
+This proves you actually READ the file, not assumed its content.
+
+**If you cannot provide a quote from a file, you did NOT read it. Go back and read it.**
+
 ---
 
 **VALIDATION CHECK**:
+
 - Every language in Section A MUST appear in Section B and Section C.
-- If a language appears in A but is missing from B or C, your review is **INVALID**.
-- You MUST go back and complete the missing analysis before concluding.
+- Every file in Section C MUST have an evidence quote from Step 5.
+- If any section is incomplete, your review is **INVALID**. Go back and complete it.
 
 **A. Always-Apply Rules**
 Some rules MUST be checked on every code operation:
@@ -79,7 +89,7 @@ Some rules MUST be checked on every code operation:
 <!-- LANGUAGE_MAPPINGS_START -->
 <!-- LANGUAGE_MAPPINGS_END -->
 
-### 3. Proactive Security
+### 2. Proactive Security
 Don't just avoid vulnerabilities-actively implement secure patterns:
 - Use parameterized queries for database access
 - Validate and sanitize all user input
