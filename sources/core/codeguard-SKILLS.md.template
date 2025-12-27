@@ -30,9 +30,14 @@ When writing or reviewing code:
 
 **Mandatory Process:**
 - Step 1: Discover files matching extensions from the table
-- Step 2: List all discovered languages (commit to analyzing each one)
-- Step 3: For each discovered language, load its rule files and apply them to all matching files
-- Step 4: Do not skip any language — every language in the table has rules because it has security implications
+- Step 2: For EACH discovered language, IMMEDIATELY identify its rules from the table:
+  
+  DISCOVERED: [language] ([count] files) → Rules: [list all rules from that language's table row]
+  
+  (Repeat this line for every discovered language before any file analysis)
+
+- Step 3: Load and apply the identified rules for each language to all matching files
+- Step 4: Do not skip any language — if you listed it in Step 2, you MUST analyze it in Step 3
 
 <!-- LANGUAGE_MAPPINGS_START -->
 <!-- LANGUAGE_MAPPINGS_END -->
