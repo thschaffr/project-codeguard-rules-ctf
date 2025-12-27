@@ -24,9 +24,11 @@ This skill should be activated when:
 **The "Rule Application Table" below is the SINGLE SOURCE OF TRUTH for this review.**
 
 **Step 1: Discovery**
-Scan the codebase for **ALL** file extensions listed in the table below.
-*   **Constraint**: You MUST construct your search command (e.g., `find`) to include every extension in the table.
-*   **Prohibition**: DO NOT use a default list. If the table has it, you must find it.
+You MUST construct your file search command using the **"File Extensions" column** in the table below.
+*   For each row in the table, extract the extensions listed (e.g., `.css`, `.scss`).
+*   Add each extension to your `find` command using `-name "*.ext"`.
+*   **Prohibition**: DO NOT use a default or memorized list of extensions.
+*   **Prohibition**: If an extension is in the table but missing from your command, the review is INVALID.
 
 **Step 2: Cross-Reference & Read**
 For every file found:
@@ -36,20 +38,17 @@ For every file found:
 
 **Step 3: Rule Loading & Application**
 For every active file type:
-1.  **READ THE RULE FILE**: You MUST read the content of the rule file listed in the table (e.g., `codeguard-9-external-imports.md`).
+1.  **READ THE RULE FILE**: You MUST read the content of the rule file listed in the table.
 2.  **APPLY**: Check the file content against the specific requirements in that rule.
 3.  **REPORT**: You must flag violations explicitly referencing the rule file name.
 
-### 2. Rule Application Table
-
 **A. Always-Apply Rules**
 Some rules MUST be checked on every code operation:
-- `codeguard-1-hardcoded-credentials.md` - Never hardcode secrets, passwords, API keys, or tokens
-- `codeguard-1-crypto-algorithms.md` - Use only modern, secure cryptographic algorithms
-- `codeguard-1-digital-certificates.md` - Validate and manage digital certificates securely
+- `codeguard-1-hardcoded-credentials.md`
+- `codeguard-1-crypto-algorithms.md`
+- `codeguard-1-digital-certificates.md`
 
-**B. Context-Specific Rules**
-Apply rules from /rules directory based on the language of the feature being implemented using the table given below:
+**B. Context-Specific Rules (Rule Application Table)**
 <!-- LANGUAGE_MAPPINGS_START -->
 <!-- LANGUAGE_MAPPINGS_END -->
 
