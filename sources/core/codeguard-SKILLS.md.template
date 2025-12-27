@@ -19,15 +19,28 @@ This skill should be activated when:
 - Handling sensitive data, credentials, or cryptographic operations
 
 ## How to Use This Skill
+
+### 1. File Discovery (CRITICAL)
+**Before starting any analysis**, you must discover all relevant files in the project.
+**DO NOT** rely on a default list of file extensions.
+**YOU MUST** scan for all file extensions associated with the languages listed in the "Rule Application Table" below.
+
+### 2. Rule Application
 When writing or reviewing code:
-1. Always-Apply Rules: Some rules MUST be checked on every code operation:
+
+**A. Always-Apply Rules**
+Some rules MUST be checked on every code operation:
 - `codeguard-1-hardcoded-credentials.md` - Never hardcode secrets, passwords, API keys, or tokens
 - `codeguard-1-crypto-algorithms.md` - Use only modern, secure cryptographic algorithms
 - `codeguard-1-digital-certificates.md` - Validate and manage digital certificates securely
-2. Context-Specific Rules: Apply rules from /rules directory based on the language of the feature being implemented using the table given below:
+
+**B. Context-Specific Rules**
+Apply rules from /rules directory based on the language of the feature being implemented using the table given below:
 <!-- LANGUAGE_MAPPINGS_START -->
 <!-- LANGUAGE_MAPPINGS_END -->
-3. Proactive Security: Don't just avoid vulnerabilities-actively implement secure patterns:
+
+### 3. Proactive Security
+Don't just avoid vulnerabilities-actively implement secure patterns:
 - Use parameterized queries for database access
 - Validate and sanitize all user input
 - Apply least-privilege principles
