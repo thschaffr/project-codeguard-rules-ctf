@@ -15,14 +15,14 @@ class ClaudeCodeFormat(BaseFormat):
     """
     Claude Code plugin format implementation (.md files).
     
-    Claude Code Skills use standard markdown files without
-    special frontmatter. The original rule content is preserved
-    and placed in the skills/software-security/rules/ directory
-    for plugin distribution.
+    Claude Code Skills use markdown files with YAML frontmatter containing:
+    - description: Rule description
+    - languages: List of applicable programming languages
+    - alwaysApply: Whether to apply to all files
+    - tags: (optional) List of categorization tags
     
-    Unlike other IDE formats, Claude Code doesn't require special
-    frontmatter transformations - it uses the rules as-is for
-    plugin-based Skills.
+    Files are placed in the skills/software-security/rules/ directory
+    for plugin distribution.
     """
 
     def get_format_name(self) -> str:
@@ -69,6 +69,12 @@ class ClaudeCodeFormat(BaseFormat):
         
         # Add alwaysApply
         yaml_lines.append(f"alwaysApply: {str(rule.always_apply).lower()}")
+        
+        # Add tags if present
+        if rule.tags:
+            yaml_lines.append("tags:")
+            for tag in rule.tags:
+                yaml_lines.append(f"- {tag}")
         
         return self._build_yaml_frontmatter(yaml_lines, rule.content)
 

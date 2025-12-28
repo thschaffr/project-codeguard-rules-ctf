@@ -20,6 +20,7 @@ class WindsurfFormat(BaseFormat):
     - globs: (if trigger is 'glob') File matching patterns
     - title: Rule title/description
     - version: Rule version
+    - tags: (optional) List of categorization tags
     """
 
     def get_format_name(self) -> str:
@@ -61,5 +62,10 @@ class WindsurfFormat(BaseFormat):
 
         # Add version
         yaml_lines.append(f"version: {self.version}")
+
+        # Add tags if present
+        if rule.tags:
+            tags_str = ", ".join(rule.tags)
+            yaml_lines.append(f"tags: [{tags_str}]")
 
         return self._build_yaml_frontmatter(yaml_lines, rule.content)
