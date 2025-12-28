@@ -14,6 +14,7 @@ KNOWN_TAGS = {
     "authentication",
     "data-security",
     "infrastructure",
+    "legal",
     "privacy",
     "secrets",
     "web",
