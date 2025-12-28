@@ -17,11 +17,80 @@ from collections import defaultdict
 
 from converter import RuleConverter
 from formats import CursorFormat, WindsurfFormat, CopilotFormat, ClaudeCodeFormat
-from utils import get_version_from_pyproject
+from utils import get_version_from_pyproject, parse_frontmatter_and_content
 from validate_versions import set_plugin_version, set_marketplace_version
+from tag_mappings import KNOWN_TAGS
 
 # Project root is always one level up from src/
 PROJECT_ROOT = Path(__file__).parent.parent
+
+
+def check_and_add_unknown_tags(source_paths: list[Path]) -> bool:
+    """
+    Scan all rule files for unknown tags and prompt user to add them.
+    
+    Args:
+        source_paths: List of source directories to scan
+    
+    Returns:
+        True if all tags are valid or user added them, False if user aborted
+    """
+    unknown_tags = set()
+    
+    # Scan all markdown files for tags
+    for source_path in source_paths:
+        if not source_path.exists():
+            continue
+        for md_file in source_path.rglob("*.md"):
+            if md_file.name.endswith(".template"):
+                continue
+            try:
+                content = md_file.read_text(encoding="utf-8")
+                frontmatter, _ = parse_frontmatter_and_content(content)
+                if frontmatter and "tags" in frontmatter:
+                    tags = frontmatter["tags"]
+                    if isinstance(tags, list):
+                        for tag in tags:
+                            if isinstance(tag, str) and tag.lower() not in KNOWN_TAGS:
+                                unknown_tags.add(tag.lower())
+            except Exception:
+                continue
+    
+    if not unknown_tags:
+        return True
+    
+    # Found unknown tags - prompt user
+    print(f"\n⚠️  Found {len(unknown_tags)} unknown tag(s): {', '.join(sorted(unknown_tags))}")
+    print(f"   Known tags: {', '.join(sorted(KNOWN_TAGS))}")
+    
+    response = input("\nWould you like to add these tags to KNOWN_TAGS? [y/N]: ").strip().lower()
+    
+    if response != 'y' and response != 'yes':
+        print("❌ Aborted. Please update your rule tags or add them to tag_mappings.py manually.")
+        return False
+    
+    # Add tags to tag_mappings.py
+    tag_mappings_path = Path(__file__).parent / "tag_mappings.py"
+    content = tag_mappings_path.read_text(encoding="utf-8")
+    
+    # Find the KNOWN_TAGS set and add new tags
+    new_tags = KNOWN_TAGS | unknown_tags
+    new_tags_str = ",\n    ".join(f'"{tag}"' for tag in sorted(new_tags))
+    
+    # Replace the KNOWN_TAGS definition
+    new_content = re.sub(
+        r'KNOWN_TAGS = \{[^}]+\}',
+        f'KNOWN_TAGS = {{\n    {new_tags_str},\n}}',
+        content
+    )
+    
+    tag_mappings_path.write_text(new_content, encoding="utf-8")
+    print(f"✅ Added {len(unknown_tags)} tag(s) to tag_mappings.py: {', '.join(sorted(unknown_tags))}")
+    
+    # Update the in-memory KNOWN_TAGS
+    KNOWN_TAGS.update(unknown_tags)
+    
+    return True
 
 
 def sync_plugin_metadata(version: str) -> None:
@@ -417,6 +486,10 @@ if __name__ == "__main__":
                 print(f"   - {filename} in: {', '.join(sources)}")
             print("\nPlease rename files to have unique names across all sources.")
             sys.exit(1)
+    
+    # Check for unknown tags and prompt user
+    if not check_and_add_unknown_tags(source_paths):
+        sys.exit(1)
     
     # Get version once and sync to metadata files
     version = get_version_from_pyproject()
