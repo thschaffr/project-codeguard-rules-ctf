@@ -10,7 +10,6 @@ Windsurf, Copilot, Claude Code). This script is the main entry point for produci
 distributable rule packs from the sources/ directory.
 """
 
-import os
 import re
 import shutil
 from pathlib import Path
@@ -37,85 +36,6 @@ def sync_plugin_metadata(version: str) -> None:
     print(f"✅ Synced plugin metadata to {version}")
 
 
-def get_claude_plugin_cache_path() -> Path | None:
-    """
-    Find the Claude Code plugin cache directory for codeguard-security.
-    
-    Returns:
-        Path to the plugin cache directory, or None if not found
-    """
-    home = Path.home()
-    
-    # Standard location: ~/.claude/plugins/cache/project-codeguard/codeguard-security/
-    cache_base = home / ".claude" / "plugins" / "cache" / "project-codeguard" / "codeguard-security"
-    
-    if not cache_base.exists():
-        return None
-    
-    # Find the latest version directory
-    version_dirs = [d for d in cache_base.iterdir() if d.is_dir()]
-    if not version_dirs:
-        return None
-    
-    # Sort by version (assuming semantic versioning) and get latest
-    latest_version = sorted(version_dirs, key=lambda x: x.name, reverse=True)[0]
-    
-    return latest_version
-
-
-def update_plugin_cache(skills_source: Path, cache_path: Path) -> tuple[bool, bool]:
-    """
-    Update the Claude Code plugin cache with generated rules.
-    
-    Args:
-        skills_source: Path to the generated skills/ directory
-        cache_path: Path to the plugin cache version directory
-    
-    Returns:
-        Tuple of (success: bool, new_rule_detected: bool)
-    """
-    cache_skills = cache_path / "skills" / "software-security"
-    
-    if not cache_skills.exists():
-        print(f"⚠️  Cache skills directory not found: {cache_skills}")
-        return False, False
-    
-    new_rule_detected = False
-    
-    # Copy SKILL.md
-    skill_md_src = skills_source / "SKILL.md"
-    skill_md_dst = cache_skills / "SKILL.md"
-    if skill_md_src.exists():
-        shutil.copy2(skill_md_src, skill_md_dst)
-    
-    # Copy all rule files and detect new ones
-    rules_src = skills_source / "rules"
-    rules_dst = cache_skills / "rules"
-    
-    if rules_src.exists() and rules_dst.exists():
-        # Get existing rules in cache before update
-        existing_rules = {f.name for f in rules_dst.glob("*.md")}
-        
-        # Get new rules from source
-        source_rules = {f.name for f in rules_src.glob("*.md")}
-        
-        # Detect new rules (in source but not in cache)
-        new_rules = source_rules - existing_rules
-        if new_rules:
-            new_rule_detected = True
-            print(f"🆕 New rule(s) detected: {', '.join(sorted(new_rules))}")
-        
-        # Clear existing rules in cache
-        for f in rules_dst.glob("*.md"):
-            f.unlink()
-        
-        # Copy new rules
-        for rule_file in rules_src.glob("*.md"):
-            shutil.copy2(rule_file, rules_dst / rule_file.name)
-    
-    return True, new_rule_detected
-
-
 def matches_tag_filter(rule_tags: list[str], filter_tags: list[str]) -> bool:
     """
     Check if rule has all required tags (AND logic).
@@ -135,30 +55,22 @@ def matches_tag_filter(rule_tags: list[str], filter_tags: list[str]) -> bool:
 
 def update_skill_md(language_to_rules: dict[str, list[str]], skill_path: str) -> None:
     """
-    Update SKILL.md with language-to-rules mapping table including file extensions.
+    Update SKILL.md with language-to-rules mapping table.
 
     Args:
         language_to_rules: Dictionary mapping languages to rule files
         skill_path: Path to SKILL.md file
     """
-    from language_mappings import LANGUAGE_TO_EXTENSIONS
-
-    # Generate markdown table with Extensions column
+    # Generate markdown table
     table_lines = [
-        "| Language | File Extensions | Rule Files to Apply |",
-        "|----------|-----------------|---------------------|",
+        "| Language | Rule Files to Apply |",
+        "|----------|---------------------|",
     ]
 
     for language in sorted(language_to_rules.keys()):
         rules = sorted(language_to_rules[language])
         rules_str = ", ".join(rules)
-        
-        # Get extensions for this language
-        extensions = LANGUAGE_TO_EXTENSIONS.get(language, [])
-        # Escape asterisks for markdown table
-        ext_str = ", ".join(extensions).replace("*", "\\*") if extensions else "N/A"
-        
-        table_lines.append(f"| {language} | {ext_str} | {rules_str} |")
+        table_lines.append(f"| {language} | {rules_str} |")
 
     table = "\n".join(table_lines)
 
@@ -183,7 +95,7 @@ def update_skill_md(language_to_rules: dict[str, list[str]], skill_path: str) ->
 
     # Write back to SKILL.md
     skill_file.write_text(updated_content, encoding="utf-8")
-    print(f"Updated SKILL.md with language mappings and extensions")
+    print(f"Updated SKILL.md with language mappings")
 
 
 def convert_rules(input_path: str, output_dir: str = "dist", include_claudecode: bool = True, version: str = None, filter_tags: list[str] = None) -> dict[str, list[str]]:
@@ -378,11 +290,6 @@ if __name__ == "__main__":
         dest="tags",
         help="Filter rules by tags (comma-separated, case-insensitive, AND logic). Example: --tag api,web-security",
     )
-    parser.add_argument(
-        "--update-cache",
-        action="store_true",
-        help="Also update the Claude Code plugin cache (~/.claude/plugins/cache/...)",
-    )
     
     cli_args = parser.parse_args()
     source_paths = _resolve_source_paths(cli_args)
@@ -474,29 +381,5 @@ if __name__ == "__main__":
     if aggregated["errors"]:
         print("❌ Some conversions failed")
         sys.exit(1)
-    
-    # Update Claude Code plugin cache if requested
-    if cli_args.update_cache and has_core:
-        cache_path = get_claude_plugin_cache_path()
-        if cache_path:
-            print(f"Updating Claude Code plugin cache: {cache_path}")
-            skills_dir = PROJECT_ROOT / "skills" / "software-security"
-            success, new_rule_detected = update_plugin_cache(skills_dir, cache_path)
-            
-            if success:
-                print(f"✅ Updated plugin cache at {cache_path}")
-                
-                # CTF Flag: Reward for creating a new custom rule
-                if new_rule_detected:
-                    print("\n" + "="*60)
-                    print("🚩 FLAG{no_limits_pure_control}")
-                    print("="*60)
-                    print("Congratulations! You've successfully created a custom")
-                    print("security rule and deployed it to your AI coding agent.")
-                    print("="*60 + "\n")
-            else:
-                print(f"⚠️  Failed to update plugin cache")
-        else:
-            print("⚠️  Claude Code plugin cache not found (plugin may not be installed)")
     
     print("✅ All conversions successful")

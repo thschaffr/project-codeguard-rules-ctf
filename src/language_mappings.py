@@ -15,7 +15,6 @@ LANGUAGE_TO_EXTENSIONS = {
     "java": [".java"],
     "c": [".c", ".h"],
     "cpp": [".cpp", ".hpp", ".cc", ".cxx"],
-    "css": [".css", ".scss", ".sass", ".less"],
     "c++": [".cpp", ".hpp", ".cc", ".cxx"],  # Alias
     "go": [".go"],
     "rust": [".rs"],
