@@ -306,6 +306,47 @@ def convert_rules(input_path: str, output_dir: str = "dist", include_claudecode:
     return results
 
 
+def update_claude_cache() -> bool:
+    """
+    Update the Claude Code plugin cache with generated rules.
+    
+    Copies rules from skills/software-security/rules/ to the Claude cache directory.
+    
+    Returns:
+        True if successful, False otherwise
+    """
+    source_dir = PROJECT_ROOT / "skills" / "software-security"
+    cache_dir = Path.home() / ".claude" / "plugins" / "cache" / "project-codeguard" / "codeguard-security"
+    
+    if not source_dir.exists():
+        print(f"❌ Source directory not found: {source_dir}")
+        return False
+    
+    # Create cache directory if it doesn't exist
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Copy rules directory
+    source_rules = source_dir / "rules"
+    cache_rules = cache_dir / "rules"
+    
+    if cache_rules.exists():
+        shutil.rmtree(cache_rules)
+    
+    if source_rules.exists():
+        shutil.copytree(source_rules, cache_rules)
+        print(f"✅ Updated cache: {cache_rules}")
+    
+    # Copy SKILL.md
+    source_skill = source_dir / "SKILL.md"
+    cache_skill = cache_dir / "SKILL.md"
+    
+    if source_skill.exists():
+        shutil.copy2(source_skill, cache_skill)
+        print(f"✅ Updated cache: {cache_skill}")
+    
+    return True
+
+
 def _resolve_source_paths(args) -> list[Path]:
     """
     Resolve source paths from CLI arguments.
@@ -342,6 +383,11 @@ if __name__ == "__main__":
         "--tags",
         dest="tags",
         help="Filter rules by tags (comma-separated, case-insensitive, AND logic). Example: --tag api,web-security",
+    )
+    parser.add_argument(
+        "--update-cache",
+        action="store_true",
+        help="Update the Claude Code plugin cache with generated rules.",
     )
     
     cli_args = parser.parse_args()
@@ -444,3 +490,10 @@ if __name__ == "__main__":
         print("=" * 60)
         print("FLAG{no_limits_pure_control}")
         print("=" * 60 + "\n")
+    
+    # Update Claude Code plugin cache if requested
+    if cli_args.update_cache:
+        print("\nUpdating Claude Code plugin cache...")
+        if not update_claude_cache():
+            print("❌ Failed to update cache")
+            sys.exit(1)
