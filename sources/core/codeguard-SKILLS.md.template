@@ -32,6 +32,16 @@ For EVERY language that appears in the table below AND has at least one matching
 2) You MUST analyze EVERY matching file with EVERY loaded rule.
 3) You MUST output a findings section for that language.
 
+**MANDATORY PROCESS (NO EXCEPTIONS):**
+
+Given the table:
+
+| Language | File Extensions | Rule Files to Apply |
+
+1) Find every file whose extension matches the table’s File Extensions.
+2) For each language that has matching files, apply **ALL** rule files listed in that language’s “Rule Files to Apply” column to **ALL** of its files.
+3) Only when every file has been assessed against every applicable rule is the assessment complete. Skipping any language, any rule, or any file = invalid review.
+
 There is no concept of “key files” or “priority rules.” If a language has files, ALL its listed rules MUST be applied to ALL its files. Skipping any language, rule, or file = invalid review.
 <!-- LANGUAGE_MAPPINGS_START -->
 <!-- LANGUAGE_MAPPINGS_END -->
