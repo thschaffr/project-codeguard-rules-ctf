@@ -36,10 +36,16 @@ def check_and_add_unknown_tags(source_paths: list[Path]) -> bool:
         True if all tags are valid or user added them, False if user aborted
     """
     unknown_tags = set()
+    files_scanned = 0
     
     # Scan all markdown files for tags
     for source_path in source_paths:
+        # Resolve relative paths against PROJECT_ROOT
+        if not source_path.is_absolute():
+            source_path = PROJECT_ROOT / source_path
+        
         if not source_path.exists():
+            print(f"⚠️  Source path not found for tag scan: {source_path}")
             continue
         for md_file in source_path.rglob("*.md"):
             if md_file.name.endswith(".template"):
@@ -55,6 +61,11 @@ def check_and_add_unknown_tags(source_paths: list[Path]) -> bool:
                                 unknown_tags.add(tag.lower())
             except Exception:
                 continue
+            files_scanned += 1
+    
+    if files_scanned == 0:
+        print("⚠️  No rule files found to scan for tags")
+        return True
     
     if not unknown_tags:
         return True
