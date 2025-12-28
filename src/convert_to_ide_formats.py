@@ -306,29 +306,35 @@ def convert_rules(input_path: str, output_dir: str = "dist", include_claudecode:
     return results
 
 
-def update_claude_cache() -> bool:
+def update_claude_cache(version: str) -> bool:
     """
     Update the Claude Code plugin cache with generated rules.
     
     Copies rules from skills/software-security/ to the Claude cache directory.
     Completely replaces existing cache contents.
     
+    Args:
+        version: Version string from pyproject.toml (e.g., "1.0.1")
+    
     Returns:
         True if successful, False otherwise
     """
     source_dir = PROJECT_ROOT / "skills" / "software-security"
-    cache_dir = Path.home() / ".claude" / "plugins" / "cache" / "project-codeguard" / "codeguard-security"
+    # Cache path: ~/.claude/plugins/cache/project-codeguard/codeguard-security/{version}/skills/software-security
+    cache_base = Path.home() / ".claude" / "plugins" / "cache" / "project-codeguard" / "codeguard-security" / version
+    cache_dir = cache_base / "skills" / "software-security"
     
     if not source_dir.exists():
         print(f"❌ Source directory not found: {source_dir}")
         return False
     
-    # Completely remove existing cache directory to ensure clean replacement
-    if cache_dir.exists():
-        shutil.rmtree(cache_dir)
-        print(f"🗑️  Cleared existing cache: {cache_dir}")
+    # Completely remove existing version cache directory to ensure clean replacement
+    if cache_base.exists():
+        shutil.rmtree(cache_base)
+        print(f"🗑️  Cleared existing cache: {cache_base}")
     
-    # Copy entire software-security directory to cache
+    # Create parent directories and copy
+    cache_dir.parent.mkdir(parents=True, exist_ok=True)
     shutil.copytree(source_dir, cache_dir)
     print(f"✅ Updated cache: {cache_dir}")
     
@@ -484,7 +490,7 @@ if __name__ == "__main__":
     # Update Claude Code plugin cache if requested
     if cli_args.update_cache:
         print("\nUpdating Claude Code plugin cache...")
-        if not update_claude_cache():
+        if not update_claude_cache(version):
             print("❌ Failed to update cache")
             sys.exit(1)
         
