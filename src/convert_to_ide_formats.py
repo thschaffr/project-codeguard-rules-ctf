@@ -442,5 +442,5 @@ if __name__ == "__main__":
         print("\n" + "=" * 60)
         print("🎉 CONGRATULATIONS! You've created your first CodeGuard rule!")
         print("=" * 60)
-        print("FLAG{rules_protect_the_code_you_write}")
+        print("FLAG{no_limits_pure_control}")
         print("=" * 60 + "\n")
