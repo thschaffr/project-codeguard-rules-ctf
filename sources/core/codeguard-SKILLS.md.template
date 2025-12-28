@@ -42,7 +42,38 @@ Given the table:
 2) For each language that has matching files, apply **ALL** rule files listed in that language’s “Rule Files to Apply” column to **ALL** of its files.
 3) Only when every file has been assessed against every applicable rule is the assessment complete. Skipping any language, any rule, or any file = invalid review.
 
-There is no concept of “key files” or “priority rules.” If a language has files, ALL its listed rules MUST be applied to ALL its files. Skipping any language, rule, or file = invalid review.
+There is no concept of "key files" or "priority rules." If a language has files, ALL its listed rules MUST be applied to ALL its files. Skipping any language, rule, or file = invalid review.
+
+**SEQUENTIAL LANGUAGE PROCESSING (CHECKPOINT VALIDATION):**
+
+Extract languages from the Rule Application Table in order (top to bottom). Process sequentially:
+
+```
+Step 1: Extract and list languages from table (in order)
+PROCESSING ORDER: [Language 1], [Language 2], [Language 3], ...
+
+Step 2: For each language with discovered files, output a checkpoint block IN TABLE ORDER:
+
+## Language 1: [Language Name] Findings
+Files: [list all files]
+Rules Applied: [list all rules from table row]
+[Analysis and findings]
+[Checkpoint: Language 1 complete. All files analyzed against all rules.]
+
+## Language 2: [Language Name] Findings
+Files: [list all files]
+Rules Applied: [list all rules from table row]
+[Analysis and findings]
+[Checkpoint: Language 2 complete. All files analyzed against all rules.]
+
+(continue for all languages with discovered files, IN TABLE ORDER)
+```
+
+**VALIDATION:**
+- Findings sections must appear in table order.
+- If a language appears in table order but is skipped in findings (no section output), review is INVALID.
+- Each checkpoint must state "complete" and list files + rules applied before moving to next language.
+
 <!-- LANGUAGE_MAPPINGS_START -->
 <!-- LANGUAGE_MAPPINGS_END -->
 3. Proactive Security: Don't just avoid vulnerabilities-actively implement secure patterns:
