@@ -98,6 +98,50 @@ def update_skill_md(language_to_rules: dict[str, list[str]], skill_path: str) ->
     print(f"Updated SKILL.md with language mappings")
 
 
+def update_tag_mappings(tag_to_rules: dict[str, list[str]], skill_path: str) -> None:
+    """
+    Update SKILL.md with tag-to-rules mapping table.
+
+    Args:
+        tag_to_rules: Dictionary mapping tags to rule files
+        skill_path: Path to SKILL.md file
+    """
+    # Generate markdown table
+    table_lines = [
+        "| Security Context (Tag) | Rules to Apply |",
+        "|------------------------|----------------|",
+    ]
+
+    for tag in sorted(tag_to_rules.keys()):
+        rules = sorted(tag_to_rules[tag])
+        rules_str = ", ".join(rules)
+        table_lines.append(f"| {tag} | {rules_str} |")
+
+    table = "\n".join(table_lines)
+
+    # Markers for the tag mappings section
+    start_marker = "<!-- TAG_MAPPINGS_START -->"
+    end_marker = "<!-- TAG_MAPPINGS_END -->"
+
+    # Read SKILL.md
+    skill_file = Path(skill_path)
+    content = skill_file.read_text(encoding="utf-8")
+
+    if start_marker not in content or end_marker not in content:
+        print("Warning: Tag mappings section not found in SKILL.md, skipping tag table")
+        return
+
+    # Replace entire section including markers with just the table
+    start_idx = content.index(start_marker)
+    end_idx = content.index(end_marker) + len(end_marker)
+    new_section = f"\n\n{table}\n\n"
+    updated_content = content[:start_idx] + new_section + content[end_idx:]
+
+    # Write back to SKILL.md
+    skill_file.write_text(updated_content, encoding="utf-8")
+    print(f"Updated SKILL.md with tag mappings")
+
+
 def convert_rules(input_path: str, output_dir: str = "dist", include_claudecode: bool = True, version: str = None, filter_tags: list[str] = None) -> dict[str, list[str]]:
     """
     Convert rule file(s) to all supported IDE formats using RuleConverter.
@@ -158,6 +202,7 @@ def convert_rules(input_path: str, output_dir: str = "dist", include_claudecode:
 
     results = {"success": [], "errors": [], "skipped": []}
     language_to_rules = defaultdict(list)
+    tag_to_rules = defaultdict(list)
 
     # Process each file
     for md_file in md_files:
@@ -198,6 +243,10 @@ def convert_rules(input_path: str, output_dir: str = "dist", include_claudecode:
             # Update language mappings for SKILL.md
             for language in result.languages:
                 language_to_rules[language].append(result.filename)
+
+            # Update tag mappings for SKILL.md
+            for tag in result.tags:
+                tag_to_rules[tag].append(result.filename)
 
         except FileNotFoundError as e:
             error_msg = f"{md_file.name}: File not found - {e}"
@@ -249,6 +298,10 @@ def convert_rules(input_path: str, output_dir: str = "dist", include_claudecode:
         output_skill_path.write_text(template_content, encoding="utf-8")
         
         update_skill_md(language_to_rules, str(output_skill_path))
+        
+        # Update tag mappings if any tags were collected
+        if tag_to_rules:
+            update_tag_mappings(tag_to_rules, str(output_skill_path))
 
     return results
 
