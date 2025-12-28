@@ -483,17 +483,17 @@ if __name__ == "__main__":
     
     print("✅ All conversions successful")
     
-    # CTF Challenge: Check if the custom rule was added successfully
-    if "codeguard-8-about.md" in aggregated["success"]:
-        print("\n" + "=" * 60)
-        print("🎉 CONGRATULATIONS! You've created your first CodeGuard rule!")
-        print("=" * 60)
-        print("FLAG{no_limits_pure_control}")
-        print("=" * 60 + "\n")
-    
     # Update Claude Code plugin cache if requested
     if cli_args.update_cache:
         print("\nUpdating Claude Code plugin cache...")
         if not update_claude_cache():
             print("❌ Failed to update cache")
             sys.exit(1)
+        
+        # CTF Challenge: Check if the custom rule was added successfully
+        if "codeguard-8-about.md" in aggregated["success"]:
+            print("\n" + "=" * 60)
+            print("🎉 CONGRATULATIONS! You've created your first CodeGuard rule!")
+            print("=" * 60)
+            print("FLAG{no_limits_pure_control}")
+            print("=" * 60 + "\n")
