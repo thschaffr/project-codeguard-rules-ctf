@@ -310,7 +310,8 @@ def update_claude_cache() -> bool:
     """
     Update the Claude Code plugin cache with generated rules.
     
-    Copies rules from skills/software-security/rules/ to the Claude cache directory.
+    Copies rules from skills/software-security/ to the Claude cache directory.
+    Completely replaces existing cache contents.
     
     Returns:
         True if successful, False otherwise
@@ -322,27 +323,24 @@ def update_claude_cache() -> bool:
         print(f"❌ Source directory not found: {source_dir}")
         return False
     
-    # Create cache directory if it doesn't exist
-    cache_dir.mkdir(parents=True, exist_ok=True)
+    # Completely remove existing cache directory to ensure clean replacement
+    if cache_dir.exists():
+        shutil.rmtree(cache_dir)
+        print(f"🗑️  Cleared existing cache: {cache_dir}")
     
-    # Copy rules directory
-    source_rules = source_dir / "rules"
-    cache_rules = cache_dir / "rules"
+    # Copy entire software-security directory to cache
+    shutil.copytree(source_dir, cache_dir)
+    print(f"✅ Updated cache: {cache_dir}")
     
-    if cache_rules.exists():
-        shutil.rmtree(cache_rules)
+    # List what was copied
+    rules_dir = cache_dir / "rules"
+    if rules_dir.exists():
+        rule_count = len(list(rules_dir.glob("*.md")))
+        print(f"   → {rule_count} rules copied")
     
-    if source_rules.exists():
-        shutil.copytree(source_rules, cache_rules)
-        print(f"✅ Updated cache: {cache_rules}")
-    
-    # Copy SKILL.md
-    source_skill = source_dir / "SKILL.md"
-    cache_skill = cache_dir / "SKILL.md"
-    
-    if source_skill.exists():
-        shutil.copy2(source_skill, cache_skill)
-        print(f"✅ Updated cache: {cache_skill}")
+    skill_file = cache_dir / "SKILL.md"
+    if skill_file.exists():
+        print(f"   → SKILL.md copied")
     
     return True
 
