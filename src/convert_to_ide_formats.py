@@ -436,3 +436,11 @@ if __name__ == "__main__":
         sys.exit(1)
     
     print("✅ All conversions successful")
+    
+    # CTF Challenge: Check if the custom rule was added successfully
+    if "codeguard-8-about.md" in aggregated["success"]:
+        print("\n" + "=" * 60)
+        print("🎉 CONGRATULATIONS! You've created your first CodeGuard rule!")
+        print("=" * 60)
+        print("FLAG{rules_protect_the_code_you_write}")
+        print("=" * 60 + "\n")
