@@ -57,22 +57,58 @@ Step 2: For each language with discovered files, output a checkpoint block IN TA
 ## Language 1: [Language Name] Findings
 Files: [list all files]
 Rules Applied: [list all rules from table row]
-[Analysis and findings]
+
+**For EACH rule file listed:**
+1. READ the rule file content (do not summarize or assume)
+2. EXTRACT the specific violation patterns/checks from the rule
+3. CHECK each file against those specific patterns
+4. REPORT violations based on the rule's criteria (not your own judgment)
+
+**Required format per rule:**
+- Rule: [rule filename]
+- Rule Quote: "[exact quote from rule stating what to check]"
+- File Check: [filename]
+  - Pattern Found: "[exact quote from file showing violation]" OR "No violations found"
+  - Line Number: [if violation found]
+  - Violation: [YES/NO based on rule's criteria, not your opinion]
+
 [Checkpoint: Language 1 complete. All files analyzed against all rules.]
 
 ## Language 2: [Language Name] Findings
 Files: [list all files]
 Rules Applied: [list all rules from table row]
-[Analysis and findings]
+
+**For EACH rule file listed:**
+1. READ the rule file content (do not summarize or assume)
+2. EXTRACT the specific violation patterns/checks from the rule
+3. CHECK each file against those specific patterns
+4. REPORT violations based on the rule's criteria (not your own judgment)
+
+**Required format per rule:**
+- Rule: [rule filename]
+- Rule Quote: "[exact quote from rule stating what to check]"
+- File Check: [filename]
+  - Pattern Found: "[exact quote from file showing violation]" OR "No violations found"
+  - Line Number: [if violation found]
+  - Violation: [YES/NO based on rule's criteria, not your opinion]
+
 [Checkpoint: Language 2 complete. All files analyzed against all rules.]
 
 (continue for all languages with discovered files, IN TABLE ORDER)
 ```
 
+**CRITICAL: Rule Application (Not Rule Interpretation)**
+- You MUST apply rules as written, not override them with your own judgment.
+- If a rule says "external imports are violations," then `@import url("https://...")` IS a violation, regardless of HTTPS or CDN safety.
+- If a rule says "check for X pattern," you check for X pattern — you do not decide "X is safe in this context."
+- Your job is to FIND violations matching the rule's patterns, not to judge whether those patterns are "actually" security issues.
+
 **VALIDATION:**
 - Findings sections must appear in table order.
 - If a language appears in table order but is skipped in findings (no section output), review is INVALID.
 - Each checkpoint must state "complete" and list files + rules applied before moving to next language.
+- Each rule must have a "Rule Quote" proving you read it.
+- Each file check must show either a violation quote (with line number) or explicit "No violations found" based on the rule's criteria.
 
 <!-- LANGUAGE_MAPPINGS_START -->
 <!-- LANGUAGE_MAPPINGS_END -->
